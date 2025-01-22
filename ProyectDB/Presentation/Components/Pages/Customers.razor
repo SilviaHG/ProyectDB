@@ -1,0 +1,68 @@
+﻿@page "/customers"
+@inject ICustomerRepository CustomerRepository
+@inject NavigationManager Navigation
+
+<h3>Lista de Clientes</h3>
+<div class="mb-4">
+    <button class="btn btn-success" type="button" @onclick="Agregar">
+        <i class="bi bi-person-plus"></i> Nuevo Cliente
+    </button>
+</div>
+
+<!-- Mensaje de Cargando -->
+@if (clientes == null)
+{
+    <div class="alert alert-info" role="alert">
+        Cargando clientes, por favor espere...
+    </div>
+}
+else
+{
+    <!-- Lista de Clientes -->
+    <div class="list-group">
+        @foreach (var cliente in clientes)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@cliente.Name</strong><br />
+                    <small class="text-muted">ID: @cliente.Id</small><br />
+                    <small>Edad: @cliente.Age</small><br />
+                    <small>Teléfono: @cliente.Phone</small><br />
+                    <small>Dirección: @cliente.Address</small>
+                </div>
+
+                <!-- Botón Eliminar -->
+                <button class="btn btn-danger btn-sm" type="button" @onclick="() => Eliminar(cliente.Id)">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    private Customer customer;
+    private IEnumerable<Customer> clientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await GetCustomersAsync();
+    }
+
+    private async Task<IEnumerable<Customer>> GetCustomersAsync()
+    {
+        return await CustomerRepository.GetCustomersAsync();
+    }
+
+    private void Agregar()
+    {
+        Navigation.NavigateTo("/add-customer");
+    }
+    private async Task Eliminar(int id)
+    {
+        await CustomerRepository.DeleteCustomerAsync(id);
+        // Recargar la lista de clientes después de la eliminación
+        clientes = await CustomerRepository.GetCustomersAsync();
+    }
+}

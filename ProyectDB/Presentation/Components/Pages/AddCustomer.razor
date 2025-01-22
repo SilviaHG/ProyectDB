@@ -10,35 +10,67 @@
     <p style="color:red;">Está cédula ya existe, ingrese los datos nuevamente</p>
 }
 
-<CustomerForm Customer="newCustomer" OnSubmit="AddCustomers">
+<CustomerForm Customer="newCustomer" OnSubmit="AddCustomers" >
 
     <button class="btn btn-secondary" type="button" @onclick ="Cancelar" >Cancelar</button>
 
 </CustomerForm>
 
 @code {
+
     private bool showMessage = false;
     private Customer newCustomer = new Customer();
     private async Task AddCustomers()
-
     {
-        //guarda al cliente en la BD
+            await CustomerRepository.AddCustomerAsync(newCustomer);
+            Navigation.NavigateTo("/customers");
 
-        if (await CustomerRepository.AddCustomerAsync(newCustomer))
+        // if (await CustomerRepository.AddCustomerAsync(newCustomer))
+        // {
+        //     Navigation.NavigateTo("/");
+        // }else
+        // {
+        //     newCustomer = new Customer();
+        //     Console.WriteLine("Está cédula ya existe");
+        //     showMessage = true;
+        //     CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
+        // Si no existe, limpiar los campos
+        // newCustomer.Name = string.Empty;
+        // newCustomer.Age = 0;
+        // newCustomer.Phone = string.Empty;
+        // newCustomer.Address = string.Empty;
+        // showMessage = false;
+        // }
+    }
+
+
+    private async Task OnCedulaChanged(ChangeEventArgs e)
+    {
+        var cedula = e.Value?.ToString(); // Obtener la cédula del evento
+
+        if (!string.IsNullOrEmpty(cedula))
         {
-            Navigation.NavigateTo("/");
-        }else
-        {
-            newCustomer = new Customer();
-            Console.WriteLine("Está cédula ya existe");
-            showMessage = true;
-            CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
+
+            var existingCustomer = await CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
+
+            if (existingCustomer != null)
+            {
+
+                newCustomer = existingCustomer;
+                showMessage = true; 
+            }
+            else
+            {
+                //creamos un nuevo clientes
+                await AddCustomers();
+                Navigation.NavigateTo("/customers");
+            }
         }
     }
     private void Cancelar()
     {
         //enviar al formulario de customer
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/customers");
     }
 
 }

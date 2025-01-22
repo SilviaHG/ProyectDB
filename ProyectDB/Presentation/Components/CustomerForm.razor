@@ -1,41 +1,43 @@
 ﻿
-<div>
-    <h3>@Titulo</h3>
+<div class="container mt-5">
+    <h3 class="text-center">@Titulo</h3>
+
     <EditForm Model="Customer" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
-        <ValidationSummary />
+        <ValidationSummary class="text-danger" />
 
-        <div>
-            <label>Cedula:</label>
-            <InputNumber id="cID" @bind-Value="Customer.Id" />
+        <div class="mb-3">
+            <label for="cID" class="form-label">Cédula:</label>
+            <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" />
         </div>
-        <br />
-        <div>
-            <label>Nombre:</label>
-            <InputText @bind-Value="Customer.Name" />
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Nombre:</label>
+            <InputText id="name" class="form-control" @bind-Value="Customer.Name" />
         </div>
-        <br />
-        <div>
-            <label>Edad:</label>
-            <InputNumber @bind-Value="Customer.Age" />
+
+        <div class="mb-3">
+            <label for="age" class="form-label">Edad:</label>
+            <InputNumber id="age" class="form-control" @bind-Value="Customer.Age" />
         </div>
-        <br />
-        <div>
-            <label>Tel:</label>
-            <InputText @bind-Value="Customer.Phone" />
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Teléfono:</label>
+            <InputText id="phone" class="form-control" @bind-Value="Customer.Phone" />
         </div>
-        <br />
-        <div>
-            <label>Dirección:</label>
-            <InputText @bind-Value="Customer.Address" />
+
+        <div class="mb-3">
+            <label for="address" class="form-label">Dirección:</label>
+            <InputText id="address" class="form-control" @bind-Value="Customer.Address" />
         </div>
-        <br />
+
         @ChildContent
         @* Pasar contenido a un componente *@
-        <button class="btn btn-success" type="submit">Guardar</button>
 
+        <div class="text-center">
+            <button class="btn btn-success" type="submit">Guardar</button>
+        </div>
     </EditForm>
-
 </div>
 
 @code {
