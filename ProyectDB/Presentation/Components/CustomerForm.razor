@@ -1,0 +1,48 @@
+﻿
+<div>
+    <h3>@Titulo</h3>
+    <EditForm Model="Customer" OnValidSubmit="OnSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Cedula:</label>
+            <InputNumber id="cID" @bind-Value="Customer.Id" />
+        </div>
+        <br />
+        <div>
+            <label>Nombre:</label>
+            <InputText @bind-Value="Customer.Name" />
+        </div>
+        <br />
+        <div>
+            <label>Edad:</label>
+            <InputNumber @bind-Value="Customer.Age" />
+        </div>
+        <br />
+        <div>
+            <label>Tel:</label>
+            <InputText @bind-Value="Customer.Phone" />
+        </div>
+        <br />
+        <div>
+            <label>Dirección:</label>
+            <InputText @bind-Value="Customer.Address" />
+        </div>
+        <br />
+        @ChildContent
+        @* Pasar contenido a un componente *@
+        <button class="btn btn-success" type="submit">Guardar</button>
+
+    </EditForm>
+
+</div>
+
+@code {
+    [Parameter] public Customer Customer { get; set; }
+    [Parameter] public string Titulo { get; set; }
+    [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+
+}

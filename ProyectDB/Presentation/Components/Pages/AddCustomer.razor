@@ -1,0 +1,44 @@
+﻿@page "/add-customer"
+
+@inject ICustomerRepository CustomerRepository
+@inject NavigationManager Navigation
+
+<p style="color: black; font-size: 25px">Ingresa los datos del cliente</p>
+
+@if (showMessage)
+{
+    <p style="color:red;">Está cédula ya existe, ingrese los datos nuevamente</p>
+}
+
+<CustomerForm Customer="newCustomer" OnSubmit="AddCustomers">
+
+    <button class="btn btn-secondary" type="button" @onclick ="Cancelar" >Cancelar</button>
+
+</CustomerForm>
+
+@code {
+    private bool showMessage = false;
+    private Customer newCustomer = new Customer();
+    private async Task AddCustomers()
+
+    {
+        //guarda al cliente en la BD
+
+        if (await CustomerRepository.AddCustomerAsync(newCustomer))
+        {
+            Navigation.NavigateTo("/");
+        }else
+        {
+            newCustomer = new Customer();
+            Console.WriteLine("Está cédula ya existe");
+            showMessage = true;
+            CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
+        }
+    }
+    private void Cancelar()
+    {
+        //enviar al formulario de customer
+        Navigation.NavigateTo("/");
+    }
+
+}
