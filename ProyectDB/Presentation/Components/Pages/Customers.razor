@@ -4,13 +4,13 @@
 
 <h3>Lista de Clientes</h3>
 <div class="mb-4">
-    <button class="btn btn-success" type="button" @onclick="Agregar">
+    <button class="btn btn-success" type="button" @onclick="AddNewCustomer">
         <i class="bi bi-person-plus"></i> Nuevo Cliente
     </button>
 </div>
 
 <!-- Mensaje de Cargando -->
-@if (clientes == null)
+@if (clients == null)
 {
     <div class="alert alert-info" role="alert">
         Cargando clientes, por favor espere...
@@ -20,20 +20,24 @@ else
 {
     <!-- Lista de Clientes -->
     <div class="list-group">
-        @foreach (var cliente in clientes)
+        @foreach (var client in clients)
         {
             <div class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                    <strong>@cliente.Name</strong><br />
-                    <small class="text-muted">ID: @cliente.Id</small><br />
-                    <small>Edad: @cliente.Age</small><br />
-                    <small>Teléfono: @cliente.Phone</small><br />
-                    <small>Dirección: @cliente.Address</small>
+                    <strong>@client.Name</strong><br />
+                    <small class="text-muted">ID: @client.Id</small><br />
+                    <small>Edad: @client.Age</small><br />
+                    <small>Teléfono: @client.Phone</small><br />
+                    <small>Dirección: @client.Address</small>
                 </div>
 
                 <!-- Botón Eliminar -->
-                <button class="btn btn-danger btn-sm" type="button" @onclick="() => Eliminar(cliente.Id)">
+                <button class="btn btn-danger btn-sm" type="button" @onclick="() => Delete(client.Id)">
                     <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <!-- Botón Actualizar -->
+                <button class="btn btn-warning btn-sm" type="button" @onclick="() => Update(client)">
+                    <i class="bi bi-trash"></i> Actualizar
                 </button>
             </div>
         }
@@ -43,11 +47,11 @@ else
 
 @code {
     private Customer customer;
-    private IEnumerable<Customer> clientes;
+    private IEnumerable<Customer> clients;
 
     protected override async Task OnInitializedAsync()
     {
-        clientes = await GetCustomersAsync();
+        clients = await GetCustomersAsync();
     }
 
     private async Task<IEnumerable<Customer>> GetCustomersAsync()
@@ -55,14 +59,18 @@ else
         return await CustomerRepository.GetCustomersAsync();
     }
 
-    private void Agregar()
+    private void AddNewCustomer()
     {
         Navigation.NavigateTo("/add-customer");
     }
-    private async Task Eliminar(int id)
+    private async Task Delete(int id)
     {
         await CustomerRepository.DeleteCustomerAsync(id);
         // Recargar la lista de clientes después de la eliminación
-        clientes = await CustomerRepository.GetCustomersAsync();
+        clients = await CustomerRepository.GetCustomersAsync();
+    }
+    private async Task Update(Customer client)
+    {
+        Navigation.NavigateTo($"/add-customer{client.Id}");
     }
 }

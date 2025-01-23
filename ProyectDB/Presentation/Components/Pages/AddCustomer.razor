@@ -1,4 +1,4 @@
-﻿@page "/add-customer"
+﻿@page "/add-customer/{CustomerId:int?}"
 
 @inject ICustomerRepository CustomerRepository
 @inject NavigationManager Navigation
@@ -20,27 +20,33 @@
 
     private bool showMessage = false;
     private Customer newCustomer = new Customer();
+    [Parameter] public int? CustomerId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(CustomerId.HasValue)
+        {
+            newCustomer = await CustomerRepository.GetCustomerByIdAsync(CustomerId.Value);
+        }
+        else
+        {
+            newCustomer = new Customer();
+        }
+    }
+
     private async Task AddCustomers()
     {
-            await CustomerRepository.AddCustomerAsync(newCustomer);
-            Navigation.NavigateTo("/customers");
 
-        // if (await CustomerRepository.AddCustomerAsync(newCustomer))
-        // {
-        //     Navigation.NavigateTo("/");
-        // }else
-        // {
-        //     newCustomer = new Customer();
-        //     Console.WriteLine("Está cédula ya existe");
-        //     showMessage = true;
-        //     CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
-        // Si no existe, limpiar los campos
-        // newCustomer.Name = string.Empty;
-        // newCustomer.Age = 0;
-        // newCustomer.Phone = string.Empty;
-        // newCustomer.Address = string.Empty;
-        // showMessage = false;
-        // }
+        if(newCustomer.Id > 0)
+        {
+            await CustomerRepository.UpdateCustomerAsync(newCustomer);
+        }
+        else
+        {
+            await CustomerRepository.AddCustomerAsync(newCustomer);
+        }
+           
+            Navigation.NavigateTo("/customers");
     }
 
 
