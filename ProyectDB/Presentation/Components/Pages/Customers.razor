@@ -3,20 +3,24 @@
 @inject NavigationManager Navigation
 
 <h3 style="align-content: center; align-items:center; margin-left:380px;" >Lista de Clientes</h3>
-@*boton de agregar*@
-<div class="mb-4" style="margin-left:380px">
-    <button class="btn btn-success" type="button" @onclick="AddNewCustomer">
+@* Contenedor de los dos elementos en la misma fila *@
+<div class="d-flex justify-content-between mb-4" style="margin-left:380px; width: 600px;">
+    <!-- agregar -->
+    <button style="height:55px" class="btn btn-success" type="button" @onclick="AddNewCustomer">
         <i class="bi bi-person-plus"></i> Nuevo Cliente
     </button>
-</div>
-@*campo de buscar*@
-    <div class="mb-4" style="margin-left:380px; width:275px;">
-        <input type="text" class="form-control" placeholder="Buscar cliente por cédula..." @bind="searchText" @oninput="SearchCustomer" />
-        <br />
-          <button class="btn btn-success" type="button" @onclick="SearchCustomer">
-             <i class="bi bi-search"></i> Buscar
-          </button>
+
+    <!-- Campo de Búsqueda -->
+    <div style="width:275px;">
+        <input style="margin-left:310px" type="text" class="form-control" placeholder="Buscar cliente por cédula..." @bind="searchText" @oninput="SearchCustomer" @onkeydown="HandleKeyDown" />
     </div>
+
+    <!--Boton de buscar-->
+    <button style="margin-left:320px" class="btn btn-success mt-2" type="button" @onclick="SearchCustomer">
+        <i class="bi bi-search"></i> Buscar
+    </button>
+</div>
+
   
 <!-- Mensaje de Cargando -->
 @if (clients == null)
@@ -96,6 +100,15 @@ else
             // Si hay texto, filtramos la lista de clientes por cédula (ID)
             clients = await CustomerRepository.GetCustomersAsync();
             clients = clients.Where(c => c.Id.ToString().Contains(searchText)); // Filtrar por cédula (ID)
+        }
+    }
+
+    //al dar enter que busque
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchCustomer(); 
         }
     }
 
