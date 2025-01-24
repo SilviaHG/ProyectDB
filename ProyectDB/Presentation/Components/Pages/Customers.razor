@@ -2,13 +2,22 @@
 @inject ICustomerRepository CustomerRepository
 @inject NavigationManager Navigation
 
-<h3>Lista de Clientes</h3>
-<div class="mb-4">
+<h3 style="align-content: center; align-items:center; margin-left:380px;" >Lista de Clientes</h3>
+@*boton de agregar*@
+<div class="mb-4" style="margin-left:380px">
     <button class="btn btn-success" type="button" @onclick="AddNewCustomer">
         <i class="bi bi-person-plus"></i> Nuevo Cliente
     </button>
 </div>
-
+@*campo de buscar*@
+    <div class="mb-4" style="margin-left:380px; width:275px;">
+        <input type="text" class="form-control" placeholder="Buscar cliente por cédula..." @bind="searchText" @oninput="SearchCustomer" />
+        <br />
+          <button class="btn btn-success" type="button" @onclick="SearchCustomer">
+             <i class="bi bi-search"></i> Buscar
+          </button>
+    </div>
+  
 <!-- Mensaje de Cargando -->
 @if (clients == null)
 {
@@ -19,7 +28,7 @@
 else
 {
     <!-- Lista de Clientes -->
-    <div class="list-group">
+    <div class="list-group" style="width:750px; margin-left: 380px;">
         @foreach (var client in clients)
         {
             <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -31,14 +40,15 @@ else
                     <small>Dirección: @client.Address</small>
                 </div>
 
+                <!-- Botón Actualizar -->
+                <button class="btn btn-warning btn-sm" style="margin-left:380px;" type="button" @onclick="() => Update(client)">
+                    <i class="bi bi-trash"></i> Actualizar
+                </button>
                 <!-- Botón Eliminar -->
                 <button class="btn btn-danger btn-sm" type="button" @onclick="() => Delete(client.Id)">
                     <i class="bi bi-trash"></i> Eliminar
                 </button>
-                <!-- Botón Actualizar -->
-                <button class="btn btn-warning btn-sm" type="button" @onclick="() => Update(client)">
-                    <i class="bi bi-trash"></i> Actualizar
-                </button>
+
             </div>
         }
     </div>
@@ -48,6 +58,7 @@ else
 @code {
     private Customer customer;
     private IEnumerable<Customer> clients;
+    private string searchText = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +82,21 @@ else
     }
     private async Task Update(Customer client)
     {
-        Navigation.NavigateTo($"/add-customer{client.Id}");
+        Navigation.NavigateTo($"/add-customer/{client.Id}");
     }
+    private async Task SearchCustomer()
+    {
+        if (string.IsNullOrEmpty(searchText))
+        {
+            // Si el campo de búsqueda está vacío, mostramos toda la lista de clientes
+            clients = await CustomerRepository.GetCustomersAsync();
+        }
+        else
+        {
+            // Si hay texto, filtramos la lista de clientes por cédula (ID)
+            clients = await CustomerRepository.GetCustomersAsync();
+            clients = clients.Where(c => c.Id.ToString().Contains(searchText)); // Filtrar por cédula (ID)
+        }
+    }
+
 }

@@ -1,14 +1,23 @@
 ﻿
 <div class="container mt-5">
-    <h3 class="text-center">@Titulo</h3>
+    
 
     <EditForm Model="Customer" OnValidSubmit="OnSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary class="text-danger" />
 
+        <h3 class="text-center">
+            @(Customer.Id > 0 ? "Editar Cliente" : "Crear Cliente")
+        </h3>
+
         <div class="mb-3">
             <label for="cID" class="form-label">Cédula:</label>
-            <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" />
+            @if(Customer.Id > 0){
+                <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" disabled />
+            }else{
+                <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" />
+            }
+            
         </div>
 
         <div class="mb-3">
@@ -35,7 +44,10 @@
         @* Pasar contenido a un componente *@
 
         <div class="text-center">
-            <button class="btn btn-success" type="submit">Guardar</button>
+            <button class="btn btn-success" type="submit">
+                @*Esto si tiene un valor id el boton tiene de nombre actualizar, de lo contrario tiene guardar*@
+                @( Customer.Id > 0 ? "Actualizar" : "Guardar" )
+            </button>
         </div>
     </EditForm>
 </div>
