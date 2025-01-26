@@ -28,6 +28,7 @@
         }
         else
         {
+            CustomerId = 0;
             newCustomer = new Customer();
         }
     }
@@ -35,12 +36,13 @@
     private async Task AddCustomers()
     {
 
-        if(newCustomer.Id > 0)
+        if(CustomerId > 0)
         {
             await CustomerRepository.UpdateCustomerAsync(newCustomer);
         }
         else
         {
+            CustomerId = 0;
             await CustomerRepository.AddCustomerAsync(newCustomer);
         }
            
@@ -50,7 +52,7 @@
 
     private async Task OnCedulaChanged(ChangeEventArgs e)
     {
-        var cedula = e.Value?.ToString(); // Obtener la cédula del evento
+        var cedula = e.Value?.ToString(); //Obtener la cédula del evento
 
         if (!string.IsNullOrEmpty(cedula))
         {
@@ -65,7 +67,7 @@
             }
             else
             {
-                //creamos un nuevo clientes
+                // creamos un nuevo clientes
                 await AddCustomers();
                 Navigation.NavigateTo("/customers");
             }

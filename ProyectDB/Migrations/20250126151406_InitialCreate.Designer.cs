@@ -11,8 +11,8 @@ using ProyectDB.Data;
 namespace ProyectDB.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250122154357_Customer")]
-    partial class Customer
+    [Migration("20250126151406_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,7 +27,6 @@ namespace ProyectDB.Migrations
             modelBuilder.Entity("ProyectDB.Data.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));

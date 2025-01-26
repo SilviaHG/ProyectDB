@@ -12,12 +12,13 @@
 
         <div class="mb-3">
             <label for="cID" class="form-label">Cédula:</label>
-            @if(Customer.Id > 0){
-                <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" disabled />
-            }else{
-                <InputNumber id="cID" class="form-control" @bind-Value="Customer.Id" />
-            }
-            
+
+            <InputNumber class="form-control" @bind-Value="Customer.Id" />
+
+           @*  @if (Customer.Id > 0)
+            {
+                <input type="text" class="form-control" value="@Customer.Id" readonly />
+            } *@
         </div>
 
         <div class="mb-3">
@@ -46,7 +47,7 @@
         <div class="text-center">
             <button class="btn btn-success" type="submit">
                 @*Esto si tiene un valor id el boton tiene de nombre actualizar, de lo contrario tiene guardar*@
-                @( Customer.Id > 0 ? "Actualizar" : "Guardar" )
+                @(Customer.Id > 0 ? "Actualizar" : "Guardar")
             </button>
         </div>
     </EditForm>
@@ -57,6 +58,7 @@
     [Parameter] public string Titulo { get; set; }
     [Parameter] public EventCallback OnSubmit { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public int? CustomerId { get; set; }
 
-
+    
 }
