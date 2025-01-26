@@ -1,0 +1,108 @@
+﻿@inject ICustomerRepository CustomerRepository
+@inject NavigationManager Navigation
+
+@code {
+    private bool ShowModal { get; set; } = false;
+    private Customer clientDelete { get; set; } = new Customer();
+    private int deleteCustomer { get; set; }
+
+    public void OpenModal(Customer client)
+    {
+        clientDelete = client;
+        deleteCustomer = client.Id;
+        ShowModal = true;
+        StateHasChanged();
+    }
+
+    public void CloseModal()
+    {
+        ShowModal = false;
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        await CustomerRepository.DeleteCustomerAsync(deleteCustomer);
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        ShowModal = false;
+        StateHasChanged();
+    }
+}
+
+@if (ShowModal)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;" aria-labelledby="exampleModalLabel" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Desea eliminar al usuario <strong>@clientDelete.Name</strong> con la cédula <strong>@clientDelete.Id</strong> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CloseModal">Cancelar</button>
+                    <button type="button" class="btn btn-success" @onclick="Delete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    /* Asegura que el modal se muestre centrado en la pantalla */
+    .modal-dialog {
+        max-width: 600px; /* Puedes ajustar el tamaño */
+        margin: 30px auto;
+    }
+
+    /* Fondo del modal (para la sombra de la caja) */
+    .modal-content {
+        border-radius: 8px; /* Bordes redondeados */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+        background-color: #f9f9f9; /* Color de fondo */
+    }
+
+    /* Estilo para el encabezado del modal */
+    .modal-header {
+        background-color: #8B0000; /* Color de fondo */
+        color: white; /* Texto en blanco */
+        border-bottom: 2px solid #8B0000; /* Línea inferior */
+    }
+
+    .modal-title {
+        font-size: 1.25rem; /* Tamaño de la fuente */
+    }
+
+    /* Estilo del cuerpo del modal */
+    .modal-body {
+        padding: 20px;
+        font-size: 1rem;
+    }
+
+    /* Estilo para el pie de página del modal */
+    .modal-footer {
+        border-top: 2px solid #f1f1f1; /* Línea superior */
+        padding: 10px;
+        text-align: right;
+    }
+
+        /* Estilo de los botones */
+        .modal-footer .btn {
+            min-width: 100px; /* Asegura que los botones sean más anchos */
+        }
+
+    /* Estilo cuando el modal está visible */
+    .modal.fade.show {
+        opacity: 1 !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Fondo oscuro cuando el modal se activa */
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+
+</style>

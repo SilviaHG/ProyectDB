@@ -1,7 +1,12 @@
 ﻿@page "/customers"
 @inject ICustomerRepository CustomerRepository
 @inject NavigationManager Navigation
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+
 
 
 <h3 style="align-content: center; align-items:center; margin-left:380px;" >Lista de Clientes</h3>
@@ -16,25 +21,22 @@
     <!-- Campo de Búsqueda -->
     <div class="d-flex">
         <input style="width: 275px;"
-               type="text"
-               class="form-control"
-               placeholder="Buscar cliente por cédula..."
-               @bind="searchText"
-               @oninput="SearchCustomer"
-               @onkeydown="HandleKeyDown" />
+        type="text"
+        class="form-control"
+        placeholder="Buscar cliente por cédula..."
+        @bind="searchText"
+        @oninput="SearchCustomer"
+        @onkeydown="HandleKeyDown" />
 
         <!-- Botón de Buscar -->
         <button class="btn btn-success ml-2"
-                type="button"
-                @onclick="SearchCustomer">
+        type="button"
+        @onclick="SearchCustomer">
             <i class="bi bi-search"></i>
         </button>
     </div>
 
 </div>
-
-
-
 
 
 <!-- Mensaje de Cargando -->
@@ -56,7 +58,7 @@ else
     <div class="list-group" style="width:750px; margin-left: 380px;">
         @foreach (var client in clients.Skip((currentPage -1) * pageSize).Take(pageSize))
         {
-            <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div @ondblclick="() => Edit(client)" class=" list-group-item d-flex justify-content-between align-items-center">
                 <div>
                     <strong>@client.Name</strong><br />
                     <small class="text-muted">ID: @client.Id</small><br />
@@ -65,19 +67,21 @@ else
                     <small>Dirección: @client.Address</small>
                 </div>
 
-                <!-- Botón Actualizar -->
-                <button class="btn btn-warning btn-sm" style="margin-left:380px;" type="button" @onclick="() => Update(client)">
-                    <i class="bi bi-trash"></i> Actualizar
-                </button>
                 <!-- Botón Eliminar -->
-                <button class="btn btn-danger btn-sm" type="button" @onclick="() => Delete(client.Id)">
-                    <i class="bi bi-trash"></i> Eliminar
+                <button class="btn btn-danger btn-sm" type="button" @onclick="() => ShowModalConfirm(client)">
+                    <i class="bi bi-trash"></i>
                 </button>
 
             </div>
         }
     </div>
 }
+
+
+<Modal @ref="modal"></Modal>
+
+
+
 <br />
 <!-- Controles de Paginación -->
 <div class="d-flex justify-content-center">
@@ -87,6 +91,7 @@ else
 </div>
 
 @code {
+
     private Customer customer;
     private IEnumerable<Customer> clients;
     private string searchText = string.Empty;
@@ -97,6 +102,9 @@ else
                                   // Variables calculadas para totalItems y totalPages
     private int totalItems => clients?.Count() ?? 0;  // Usa Count() para IEnumerable
     private int totalPages => totalItems > 0 ? (int)Math.Ceiling((double)totalItems / pageSize) : 1;
+
+    //modal
+    private Modal modal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,16 +120,14 @@ else
     {
         Navigation.NavigateTo("/add-customer");
     }
-    private async Task Delete(int id)
+
+
+
+    private void ShowModalConfirm(Customer client)
     {
-        await CustomerRepository.DeleteCustomerAsync(id);
-        // Recargar la lista de clientes después de la eliminación
-        clients = await CustomerRepository.GetCustomersAsync();
+        modal.OpenModal(client);
     }
-    private async Task Update(Customer client)
-    {
-        Navigation.NavigateTo($"/add-customer/{client.Id}");
-    }
+
     private async Task SearchCustomer()
     {
         if (string.IsNullOrEmpty(searchText))
@@ -139,11 +145,11 @@ else
                 // Si no se puede convertir a número, no filtramos nada
                 clients = Enumerable.Empty<Customer>();
             }
-           
+
         }
         // Después de buscar, aseguramos que la paginación se actualice
-        currentPage = 1;  // Volver a la primera página después de la búsqueda
-      
+        currentPage = 1;  
+
     }
 
     //al dar enter que busque
@@ -153,6 +159,10 @@ else
         {
             await SearchCustomer(); 
         }
+    }
+
+    private void Edit(Customer client){
+        Navigation.NavigateTo($"/add-customer/{client.Id}");
     }
 
     // Función para ir a la página siguiente
