@@ -8,7 +8,7 @@
     <p style="color:red;">Está cédula ya existe, ingrese los datos nuevamente</p>
 }
 
-<CustomerForm Customer="newCustomer" OnSubmit="AddCustomers" >
+<CustomerForm Customer="newCustomer" OnSubmit="AddCustomers" CustomerId="CustomerId" >
 
     <button class="btn btn-secondary" type="button" @onclick="Cancelar">Cancelar</button>
 
@@ -48,31 +48,6 @@
            
             Navigation.NavigateTo("/customers");
     }
-
-
-    // private async Task OnCedulaChanged(ChangeEventArgs e)
-    // {
-    //     var cedula = e.Value?.ToString(); //Obtener la cédula del evento
-
-    //     if (!string.IsNullOrEmpty(cedula))
-    //     {
-
-    //         var existingCustomer = await CustomerRepository.GetCustomerByIdAsync(newCustomer.Id);
-
-    //         if (existingCustomer != null)
-    //         {
-
-    //             newCustomer = existingCustomer;
-    //             showMessage = true; 
-    //         }
-    //         else
-    //         {
-    //             // creamos un nuevo clientes
-    //             await AddCustomers();
-    //             Navigation.NavigateTo("/customers");
-    //         }
-    //     }
-    // }
     private void Cancelar()
     {
         //enviar al formulario de customer

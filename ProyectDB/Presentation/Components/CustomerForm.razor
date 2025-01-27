@@ -1,24 +1,24 @@
 ﻿
 <div class="container mt-5">
-    
 
-    <EditForm Model="Customer" OnValidSubmit="OnSubmit">
+
+    <EditForm Model="Customer" OnValidSubmit="OnSubmit" >
         <DataAnnotationsValidator />
         <ValidationSummary class="text-danger" />
 
         <h3 class="text-center">
-            @(Customer.Id > 0 ? "Editar Cliente" : "Crear Cliente")
+            @(CustomerId > 0 ? "Editar Cliente" : "Crear Cliente")
         </h3>
 
         <div class="mb-3">
             <label for="cID" class="form-label">Cédula:</label>
 
-            <InputNumber class="form-control" @bind-Value="Customer.Id" />
-
-           @*  @if (Customer.Id > 0)
+            @if (CustomerId > 0)
             {
-                <input type="text" class="form-control" value="@Customer.Id" readonly />
-            } *@
+                <input type="text" class="form-control" value="@Customer.Id" disabled />
+            }else{
+                <InputNumber class="form-control" @bind-Value="Customer.Id" />
+            }
         </div>
 
         <div class="mb-3">
@@ -47,7 +47,7 @@
         <div class="text-center">
             <button class="btn btn-success" type="submit">
                 @*Esto si tiene un valor id el boton tiene de nombre actualizar, de lo contrario tiene guardar*@
-                @(Customer.Id > 0 ? "Actualizar" : "Guardar")
+                @(CustomerId > 0 ? "Actualizar" : "Guardar")
             </button>
         </div>
     </EditForm>
@@ -60,5 +60,5 @@
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public int? CustomerId { get; set; }
 
-    
+
 }
