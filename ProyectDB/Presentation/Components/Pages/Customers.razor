@@ -21,8 +21,8 @@
         class="form-control"
         placeholder="Buscar cliente por cédula..."
         @bind="searchText"
-        @oninput="SearchCustomer"
-        @onkeydown="HandleKeyDown" />
+               @oninput="OnInputChange"
+         />
 
         <!-- Botón de Buscar -->
         <button class="btn btn-success ml-2"
@@ -98,13 +98,44 @@ else
     private int totalItems => clients?.Count() ?? 0;  
     private int totalPages => totalItems > 0 ? (int)Math.Ceiling((double)totalItems / pageSize) : 1;
 
+    //buscar   
+    private Debouncer<string> _searchDebouncer;
+
 
     //modal
     private Modal modal;
 
     protected override async Task OnInitializedAsync()
     {
-        clients = await GetCustomersAsync();
+        clients = await GetCustomersAsync();  // Obtenemos la lista completa de clientes
+        _searchDebouncer = new Debouncer<string>(async (value) =>
+        {
+            // Lógica de búsqueda
+            if (string.IsNullOrEmpty(value))
+            {
+                clients = await GetCustomersAsync();  // Vuelve a cargar todos los clientes si no hay texto
+            }
+            else
+            {
+                if (int.TryParse(value, out int searchID))
+                {
+                    var allClients = await GetCustomersAsync();
+                    clients = allClients.Where(c => c.Id == searchID).ToList();  // Filtrar por ID
+                }
+                else
+                {
+                    clients = Enumerable.Empty<Customer>();  // Si no es un número, no muestra resultados
+                }
+            }
+
+            // Resetear a la primera página después de la búsqueda
+            currentPage = 1;
+
+            
+
+            // Actualizar la UI
+            InvokeAsync(StateHasChanged);
+        }, 750);  // 750 ms de retardo
         
     }
 
@@ -182,11 +213,11 @@ else
     //  si hay una página siguiente
     private bool HasNextPage() => currentPage < totalPages;
 
-    //buscador 
     private async Task OnInputChange(ChangeEventArgs evt)
     {
         _searchDebouncer.Trigger(evt.Value.ToString());
     }
+
 
        
 
